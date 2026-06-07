@@ -104,8 +104,8 @@
                 <input type="checkbox" id="enableTaxTables" checked class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
                 <span class="text-sm font-medium text-slate-700">Generate Tax Tier Tables <span class="text-slate-400 text-xs block sm:inline">(Показывать прогрессивные таблицы)</span></span>
             </label>
-            <label class="flex items-center space-x-3 cursor-pointer select-none opacity-50 transition-opacity" id="comparisonWrapper">
-                <input type="checkbox" id="enableComparison" disabled class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+            <label class="flex items-center space-x-3 cursor-pointer select-none" id="comparisonWrapper">
+                <input type="checkbox" id="enableComparison" class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
                 <span class="text-sm font-medium text-slate-700">Enable In-Table Comparison <span class="text-slate-400 text-xs block sm:inline">(Включить режим сравнения систем)</span></span>
             </label>
         </div>
@@ -139,7 +139,7 @@
                                         <th class="p-4">Users</th>
                                         <th class="p-4">Price</th>
                                         <th class="p-4 text-right">Total Price</th>
-                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total (Margin Left)</th>
                                         <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
                                     </tr>
                                 </thead>
@@ -147,7 +147,6 @@
                             </table>
                         </div>
                     </div>
-                    <div id="decSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
 
                 <div class="flex flex-col justify-between bg-white rounded-xl">
@@ -167,7 +166,7 @@
                                         <th class="p-4">Users</th>
                                         <th class="p-4">Price</th>
                                         <th class="p-4 text-right">Total Price</th>
-                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total (Margin Left)</th>
                                         <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
                                     </tr>
                                 </thead>
@@ -175,7 +174,6 @@
                             </table>
                         </div>
                     </div>
-                    <div id="incSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
             </div>
 
@@ -197,14 +195,13 @@
                                         <th class="p-4">Users</th>
                                         <th class="p-4">Tier Price</th>
                                         <th class="p-4 text-right">Total (Tax Way)</th>
-                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total (Margin Left)</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-sm"></tbody>
                             </table>
                         </div>
                     </div>
-                    <div id="taxDecSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
 
                 <div class="flex flex-col justify-between bg-white rounded-xl">
@@ -224,14 +221,13 @@
                                         <th class="p-4">Users</th>
                                         <th class="p-4">Tier Price</th>
                                         <th class="p-4 text-right">Total (Tax Way)</th>
-                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total (Margin Left)</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-sm"></tbody>
                             </table>
                         </div>
                     </div>
-                    <div id="taxIncSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
             </div>
 
@@ -252,7 +248,6 @@
         const priceCapMaxLabel = document.getElementById('priceCapMaxLabel');
         const enableTaxTables = document.getElementById('enableTaxTables');
         const enableComparison = document.getElementById('enableComparison');
-        const comparisonWrapper = document.getElementById('comparisonWrapper');
 
         const calculateBtn = document.getElementById('calculateBtn');
         const copyBtn = document.getElementById('copyBtn');
@@ -266,19 +261,13 @@
 
         let lastGeneratedData = null;
 
-        // Checkbox states handler
-        enableTaxTables.addEventListener('change', () => {
-            if (enableTaxTables.checked) {
-                enableComparison.disabled = false;
-                comparisonWrapper.classList.remove('opacity-50');
-            } else {
-                enableComparison.checked = false;
-                enableComparison.disabled = true;
-                comparisonWrapper.classList.add('opacity-50');
+        // Исправлено: Галочка включения сравнения активна всегда. При её включении автоматом активируется первая.
+        enableComparison.addEventListener('change', () => {
+            if (enableComparison.checked) {
+                enableTaxTables.checked = true;
             }
         });
 
-        // Dual Synchronization Control engine (Slider <-> Number Box)
         function syncValues(sourceId, type) {
             let targetVal;
             if (type === 'range') {
@@ -314,7 +303,7 @@
             numElements[id].addEventListener('change', () => syncValues(id, 'number'));
         });
 
-        updateLimitsAndLabels(); // Initial run
+        updateLimitsAndLabels();
 
         // Computational Core Logic
         calculateBtn.addEventListener('click', () => {
@@ -346,7 +335,6 @@
                 stepPricesInc.push(pInc);
             }
 
-            // Processing Loop
             for (let users = initUsers; users <= MAX_USERS; users += userStepSize) {
                 if (users === 0) continue;
 
@@ -399,14 +387,6 @@
                 renderTableBody(taxIncTbody, dataset.taxIncRows, 'text-rose-600 font-medium', false, 'tax');
             }
 
-            // Build Bottom Footnote Summaries (Without title headings or item sums)
-            buildAnalyticsSummary('decSummary', dataset.decRows, 'total');
-            buildAnalyticsSummary('incSummary', dataset.incRows, 'total');
-            if (showTax && !compMode) {
-                buildAnalyticsSummary('taxDecSummary', dataset.taxDecRows, 'total');
-                buildAnalyticsSummary('taxIncSummary', dataset.taxIncRows, 'total');
-            }
-
             tablesContainer.classList.remove('hidden');
             copyBtn.classList.remove('hidden');
             tablesContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -426,45 +406,26 @@
                     compTd = `<td class="p-4 text-right ${diffStyle}">₪${row.taxTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} <span class="text-xs font-normal opacity-80 block">(${diffStr} vs basic)</span></td>`;
                 }
 
-                let displayTotal = modeType === 'standard' ? row.total : row.total;
+                // Изменено: Расчет остатка (Fixed - System) и процента строки
+                let systemCost = modeType === 'standard' ? row.total : row.total;
+                let rowMargin = row.fixedTotal - systemCost;
+                let rowPercentage = row.fixedTotal > 0 ? (rowMargin / row.fixedTotal) * 100 : 0;
+                
+                let marginSign = rowMargin >= 0 ? '+' : '';
+                let marginColor = rowMargin >= 0 ? 'text-emerald-600 font-bold' : 'text-rose-600 font-bold';
 
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-slate-700">${row.users}</td>
                     <td class="p-4 ${style}">₪${row.price.toFixed(2)}</td>
-                    <td class="p-4 text-right font-bold text-slate-900">₪${displayTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-4 text-right font-medium text-indigo-600">₪${row.fixedTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-4 text-right font-bold text-slate-900">₪${systemCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-4 text-right font-medium text-slate-500">
+                        ₪${row.fixedTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        <span class="text-xs block ${marginColor}">₪${rowMargin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${marginSign}${rowPercentage.toFixed(1)}%)</span>
+                    </td>
                     ${compTd}
                 `;
                 tbodyNode.appendChild(tr);
             });
-        }
-
-        // Analytics calculation helper for bottom cards (Updated margin calculation logic)
-        function buildAnalyticsSummary(elementId, rows, key) {
-            const container = document.getElementById(elementId);
-            if (!rows || rows.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            let sumSystem = 0;
-            let sumFixed = 0;
-            rows.forEach(r => {
-                sumSystem += r[key];
-                sumFixed += r.fixedTotal;
-            });
-
-            let margin = sumFixed - sumSystem;
-            let percentChange = sumFixed !== 0 ? (margin / sumFixed) * 100 : 0;
-            
-            let percentText = percentChange >= 0 
-                ? `<span class="text-emerald-600 font-bold">+${percentChange.toFixed(1)}%</span> margin left` 
-                : `<span class="text-rose-600 font-bold">${percentChange.toFixed(1)}%</span> deficit`;
-            
-            container.innerHTML = `
-                <p><strong>Remaining Margin (Fixed Total - System Price):</strong> <span class="${margin >= 0 ? 'text-emerald-600' : 'text-rose-600'} font-bold">₪${margin.toLocaleString(undefined, {minimumFractionDigits:2})}</span></p>
-                <p><strong>Comparison Percentage:</strong> ${percentText}</p>
-            `;
         }
 
         // Export Mechanism standard Tab Delimiters layout configuration
