@@ -70,7 +70,7 @@
                 <div class="flex justify-between text-xs text-slate-400 mt-1"><span>5</span><span>100</span></div>
             </div>
 
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 md:col-span-2">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div class="flex justify-between items-center mb-2">
                     <label for="priceCap" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
                         End1 / Start2 <span class="text-slate-400 normal-case block md:inline md:ml-1">(Min 1 / Max 2)</span>
@@ -82,6 +82,20 @@
                 </div>
                 <input type="range" id="priceCap" min="20" max="205" value="55" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                 <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪20</span><span id="priceCapMaxLabel">₪205</span></div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div class="flex justify-between items-center mb-2">
+                    <label for="userCost" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
+                        User Cost (Fixed) <span class="text-slate-400 normal-case block md:inline md:ml-1">(Фиксированная стоимость пользователя)</span>
+                    </label>
+                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 w-24">
+                        <span class="text-slate-400 text-sm mr-1">₪</span>
+                        <input type="number" id="userCostNum" min="300" max="1000" step="5" value="500" class="w-full text-center text-indigo-700 font-bold text-sm focus:outline-none">
+                    </div>
+                </div>
+                <input type="range" id="userCost" min="300" max="1000" value="500" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪300</span><span>₪1000</span></div>
             </div>
         </div>
 
@@ -108,100 +122,116 @@
         <div id="tablesContainer" class="flex flex-col gap-8 hidden">
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                        System 1: Price Decreases per Step
-                    </h3>
-                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
-                        <p>Starts from Initial Price (Max) and decreases down to Price Cap (Min).</p>
-                        <p class="text-slate-400">Начинается с начальной цены (макс) и уменьшается до границы цены (мин).</p>
+                <div class="flex flex-col justify-between bg-white rounded-xl">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                            System 1: Price Decreases per Step
+                        </h3>
+                        <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                            <p>Starts from Initial Price (Max) and decreases down to Price Cap (Min).</p>
+                            <p class="text-slate-400">Начинается с начальной цены (макс) и уменьшается до границы цены (мин).</p>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                            <table class="w-full text-left border-collapse" id="decreasingTable">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="p-4">Users</th>
+                                        <th class="p-4">Price</th>
+                                        <th class="p-4 text-right">Total Price</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                        <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                        <table class="w-full text-left border-collapse" id="decreasingTable">
-                            <thead>
-                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
-                                    <th class="p-4">Users</th>
-                                    <th class="p-4">Price per User</th>
-                                    <th class="p-4 text-right">Total Price</th>
-                                    <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
-                        </table>
-                    </div>
+                    <div id="decSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
 
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-                        System 2: Price Increases per Step
-                    </h3>
-                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
-                        <p>Starts from Price Cap (Min) and increases up to Initial Price (Max).</p>
-                        <p class="text-slate-400">Начинается с границы цены (мин) и увеличивается до начальной цены (макс).</p>
+                <div class="flex flex-col justify-between bg-white rounded-xl">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                            System 2: Price Increases per Step
+                        </h3>
+                        <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                            <p>Starts from Price Cap (Min) and increases up to Initial Price (Max).</p>
+                            <p class="text-slate-400">Начинается с границы цены (мин) и увеличивается до начальной цены (макс).</p>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                            <table class="w-full text-left border-collapse" id="increasingTable">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="p-4">Users</th>
+                                        <th class="p-4">Price</th>
+                                        <th class="p-4 text-right">Total Price</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                        <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                        <table class="w-full text-left border-collapse" id="increasingTable">
-                            <thead>
-                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
-                                    <th class="p-4">Users</th>
-                                    <th class="p-4">Price per User</th>
-                                    <th class="p-4 text-right">Total Price</th>
-                                    <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
-                        </table>
-                    </div>
+                    <div id="incSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
             </div>
 
             <div id="taxGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
-                        System 3: Tax Tier Decreases (Progressive)
-                    </h3>
-                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
-                        <p>Cumulative chunk calculations applying decreasing pricing per block level.</p>
-                        <p class="text-slate-400">Накопительный расчет: пласты пользователей считаются по снижающейся цене.</p>
+                <div class="flex flex-col justify-between bg-white rounded-xl">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
+                            System 3: Tax Tier Decreases (Progressive)
+                        </h3>
+                        <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                            <p>Cumulative chunk calculations applying decreasing pricing per block level.</p>
+                            <p class="text-slate-400">Накопительный расчет: пласты пользователей считаются по снижающейся цене.</p>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                            <table class="w-full text-left border-collapse" id="taxDecreasingTable">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="p-4">Users</th>
+                                        <th class="p-4">Tier Price</th>
+                                        <th class="p-4 text-right">Total (Tax Way)</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                        <table class="w-full text-left border-collapse" id="taxDecreasingTable">
-                            <thead>
-                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
-                                    <th class="p-4">Users</th>
-                                    <th class="p-4">Last Tier Price</th>
-                                    <th class="p-4 text-right">Total Price (Tax Way)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
-                        </table>
-                    </div>
+                    <div id="taxDecSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
 
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-rose-500"></span>
-                        System 4: Tax Tier Increases (Progressive)
-                    </h3>
-                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
-                        <p>Cumulative chunk calculations applying increasing pricing per block level.</p>
-                        <p class="text-slate-400">Накопительный расчет: пласты пользователей считаются по растущей цене.</p>
+                <div class="flex flex-col justify-between bg-white rounded-xl">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                            System 4: Tax Tier Increases (Progressive)
+                        </h3>
+                        <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                            <p>Cumulative chunk calculations applying increasing pricing per block level.</p>
+                            <p class="text-slate-400">Накопительный расчет: пласты пользователей считаются по растущей цене.</p>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                            <table class="w-full text-left border-collapse" id="taxIncreasingTable">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="p-4">Users</th>
+                                        <th class="p-4">Tier Price</th>
+                                        <th class="p-4 text-right">Total (Tax Way)</th>
+                                        <th class="p-4 text-right text-indigo-600">Fixed Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                        <table class="w-full text-left border-collapse" id="taxIncreasingTable">
-                            <thead>
-                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
-                                    <th class="p-4">Users</th>
-                                    <th class="p-4">Last Tier Price</th>
-                                    <th class="p-4 text-right">Total Price (Tax Way)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
-                        </table>
-                    </div>
+                    <div id="taxIncSummary" class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-1"></div>
                 </div>
             </div>
 
@@ -210,7 +240,7 @@
 
     <script>
         // DOM Elements mapping
-        const inputs = ['initialUsers', 'initialPrice', 'priceStep', 'usersPerStep', 'priceCap'];
+        const inputs = ['initialUsers', 'initialPrice', 'priceStep', 'usersPerStep', 'priceCap', 'userCost'];
         const rangeElements = {};
         const numElements = {};
 
@@ -256,7 +286,6 @@
                 numElements[sourceId].value = targetVal;
             } else {
                 targetVal = parseInt(numElements[sourceId].value) || 0;
-                // Clip values against boundaries
                 const min = parseInt(rangeElements[sourceId].min);
                 const max = parseInt(rangeElements[sourceId].max);
                 if (targetVal < min) targetVal = min;
@@ -270,7 +299,6 @@
         function updateLimitsAndLabels() {
             const currentInitPrice = parseFloat(numElements.initialPrice.value) || 0;
             
-            // Boundary enforcement: Cap cannot be greater than Initial Price
             rangeElements.priceCap.max = currentInitPrice;
             numElements.priceCap.max = currentInitPrice;
             priceCapMaxLabel.textContent = '₪' + currentInitPrice.toFixed(0);
@@ -295,6 +323,7 @@
             const stepDelta = parseFloat(numElements.priceStep.value) || 0;
             const userStepSize = parseInt(numElements.usersPerStep.value) || 25;
             const minPrice = parseFloat(numElements.priceCap.value) || 0;
+            const fixedCostPerUser = parseFloat(numElements.userCost.value) || 0;
             const MAX_USERS = 500;
 
             if (initUsers > MAX_USERS || userStepSize <= 0) return;
@@ -302,7 +331,6 @@
             const dataset = { decRows: [], incRows: [], taxDecRows: [], taxIncRows: [] };
             let currentStepIdx = 0;
 
-            // Pre-calculate prices array per steps for taxonomic block evaluation
             const stepPricesDec = [];
             const stepPricesInc = [];
             let maxStepsPossible = Math.ceil(MAX_USERS / userStepSize) + 5;
@@ -322,20 +350,18 @@
             for (let users = initUsers; users <= MAX_USERS; users += userStepSize) {
                 if (users === 0) continue;
 
-                // 1. System 1 & 2 Standard calculation
                 let standardPriceDec = stepPricesDec[currentStepIdx];
                 let standardPriceInc = stepPricesInc[currentStepIdx];
 
                 let totalStandardDec = users * standardPriceDec;
                 let totalStandardInc = users * standardPriceInc;
+                let totalFixed = users * fixedCostPerUser;
 
-                // 2. System 3 & 4 Tax Layered Chunk Cumulative Calculation
                 let totalTaxDec = 0;
                 let totalTaxInc = 0;
                 let remainingUsers = users;
                 let chunkIdx = 0;
 
-                // First base chunk sizing evaluation
                 let currentBlockCapacity = initUsers > 0 ? initUsers : userStepSize;
 
                 while (remainingUsers > 0) {
@@ -346,33 +372,39 @@
 
                     remainingUsers -= chunk;
                     chunkIdx++;
-                    currentBlockCapacity = userStepSize; // shifts to standard size for subsequent cycles
+                    currentBlockCapacity = userStepSize;
                 }
 
-                dataset.decRows.push({ users, price: standardPriceDec, total: totalStandardDec, taxTotal: totalTaxDec });
-                dataset.incRows.push({ users, price: standardPriceInc, total: totalStandardInc, taxTotal: totalTaxInc });
-                dataset.taxDecRows.push({ users, price: stepPricesDec[currentStepIdx], total: totalTaxDec });
-                dataset.taxIncRows.push({ users, price: stepPricesInc[currentStepIdx], total: totalTaxInc });
+                dataset.decRows.push({ users, price: standardPriceDec, total: totalStandardDec, fixedTotal: totalFixed, taxTotal: totalTaxDec });
+                dataset.incRows.push({ users, price: standardPriceInc, total: totalStandardInc, fixedTotal: totalFixed, taxTotal: totalTaxInc });
+                dataset.taxDecRows.push({ users, price: stepPricesDec[currentStepIdx], total: totalTaxDec, fixedTotal: totalFixed });
+                dataset.taxIncRows.push({ users, price: stepPricesInc[currentStepIdx], total: totalTaxInc, fixedTotal: totalFixed });
 
                 currentStepIdx++;
             }
 
             lastGeneratedData = dataset;
 
-            // Render tables onto UI view
             const showTax = enableTaxTables.checked;
             const compMode = enableComparison.checked && showTax;
 
-            // Toggle table structures visibility based on configurations
             document.querySelectorAll('.comp-header').forEach(el => el.classList.toggle('hidden', !compMode));
             taxGrid.classList.toggle('hidden', !showTax || compMode);
 
-            renderTableBody(decTbody, dataset.decRows, 'text-blue-600 font-medium', compMode);
-            renderTableBody(incTbody, dataset.incRows, 'text-amber-600 font-medium', compMode);
+            renderTableBody(decTbody, dataset.decRows, 'text-blue-600 font-medium', compMode, 'standard');
+            renderTableBody(incTbody, dataset.incRows, 'text-amber-600 font-medium', compMode, 'standard');
             
             if (showTax && !compMode) {
-                renderTableBody(taxDecTbody, dataset.taxDecRows, 'text-indigo-600 font-medium', false);
-                renderTableBody(taxIncTbody, dataset.taxIncRows, 'text-rose-600 font-medium', false);
+                renderTableBody(taxDecTbody, dataset.taxDecRows, 'text-indigo-600 font-medium', false, 'tax');
+                renderTableBody(taxIncTbody, dataset.taxIncRows, 'text-rose-600 font-medium', false, 'tax');
+            }
+
+            // Build Bottom Footnote Summaries (Without title headings or item sums)
+            buildAnalyticsSummary('decSummary', dataset.decRows, 'total');
+            buildAnalyticsSummary('incSummary', dataset.incRows, 'total');
+            if (showTax && !compMode) {
+                buildAnalyticsSummary('taxDecSummary', dataset.taxDecRows, 'total');
+                buildAnalyticsSummary('taxIncSummary', dataset.taxIncRows, 'total');
             }
 
             tablesContainer.classList.remove('hidden');
@@ -380,7 +412,7 @@
             tablesContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
 
-        function renderTableBody(tbodyNode, rows, style, compMode) {
+        function renderTableBody(tbodyNode, rows, style, compMode, modeType) {
             tbodyNode.innerHTML = '';
             rows.forEach(row => {
                 const tr = document.createElement('tr');
@@ -394,22 +426,53 @@
                     compTd = `<td class="p-4 text-right ${diffStyle}">₪${row.taxTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} <span class="text-xs font-normal opacity-80 block">(${diffStr} vs basic)</span></td>`;
                 }
 
+                let displayTotal = modeType === 'standard' ? row.total : row.total;
+
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-slate-700">${row.users}</td>
                     <td class="p-4 ${style}">₪${row.price.toFixed(2)}</td>
-                    <td class="p-4 text-right font-bold text-slate-900">₪${row.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-4 text-right font-bold text-slate-900">₪${displayTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-4 text-right font-medium text-indigo-600">₪${row.fixedTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                     ${compTd}
                 `;
                 tbodyNode.appendChild(tr);
             });
         }
 
+        // Analytics calculation helper for bottom cards (Updated margin calculation logic)
+        function buildAnalyticsSummary(elementId, rows, key) {
+            const container = document.getElementById(elementId);
+            if (!rows || rows.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let sumSystem = 0;
+            let sumFixed = 0;
+            rows.forEach(r => {
+                sumSystem += r[key];
+                sumFixed += r.fixedTotal;
+            });
+
+            let margin = sumFixed - sumSystem;
+            let percentChange = sumFixed !== 0 ? (margin / sumFixed) * 100 : 0;
+            
+            let percentText = percentChange >= 0 
+                ? `<span class="text-emerald-600 font-bold">+${percentChange.toFixed(1)}%</span> margin left` 
+                : `<span class="text-rose-600 font-bold">${percentChange.toFixed(1)}%</span> deficit`;
+            
+            container.innerHTML = `
+                <p><strong>Remaining Margin (Fixed Total - System Price):</strong> <span class="${margin >= 0 ? 'text-emerald-600' : 'text-rose-600'} font-bold">₪${margin.toLocaleString(undefined, {minimumFractionDigits:2})}</span></p>
+                <p><strong>Comparison Percentage:</strong> ${percentText}</p>
+            `;
+        }
+
         // Export Mechanism standard Tab Delimiters layout configuration
         copyBtn.addEventListener('click', () => {
             if (!lastGeneratedData) return;
 
-            let csvString = "SYSTEM 1: PRICE DECREASES\t\t\t\tSYSTEM 2: PRICE INCREASES\n";
-            csvString += "Users\tPrice Per User (ILS)\tTotal Cost (ILS)\t\tUsers\tPrice Per User (ILS)\tTotal Cost (ILS)\n";
+            let csvString = "SYSTEM 1: PRICE DECREASES\t\t\t\t\tSYSTEM 2: PRICE INCREASES\n";
+            csvString += "Users\tPrice\tTotal Price\tFixed Total\t\tUsers\tPrice\tTotal Price\tFixed Total\n";
 
             const maxLength = Math.max(lastGeneratedData.decRows.length, lastGeneratedData.incRows.length);
 
@@ -419,28 +482,27 @@
                 let rowString = "";
                 
                 if(dec) {
-                    rowString += `${dec.users}\t${dec.price.toFixed(2)}\t${dec.total.toFixed(2)}`;
+                    rowString += `${dec.users}\t${dec.price.toFixed(2)}\t${dec.total.toFixed(2)}\t${dec.fixedTotal.toFixed(2)}`;
                 } else {
-                    rowString += "\t\t";
+                    rowString += "\t\t\t";
                 }
                 rowString += "\t\t"; 
                 if(inc) {
-                    rowString += `${inc.users}\t${inc.price.toFixed(2)}\t${inc.total.toFixed(2)}`;
+                    rowString += `${inc.users}\t${inc.price.toFixed(2)}\t${inc.total.toFixed(2)}\t${inc.fixedTotal.toFixed(2)}`;
                 }
                 csvString += rowString + "\n";
             }
 
-            // Append additional Tax structures into file if open in standalone visibility tree
             if(enableTaxTables.checked && !enableComparison.checked) {
-                csvString += "\n\nSYSTEM 3: TAX DECREASES (PROGRESSIVE)\t\t\t\tSYSTEM 4: TAX INCREASES (PROGRESSIVE)\n";
-                csvString += "Users\tPrice Per User (ILS)\tTax Cumulative Cost\t\tUsers\tPrice Per User (ILS)\tTax Cumulative Cost\n";
+                csvString += "\n\nSYSTEM 3: TAX DECREASES (PROGRESSIVE)\t\t\t\t\tSYSTEM 4: TAX INCREASES (PROGRESSIVE)\n";
+                csvString += "Users\tTier Price\tTotal (Tax Way)\tFixed Total\t\tUsers\tTier Price\tTotal (Tax Way)\tFixed Total\n";
                 for(let i = 0; i < maxLength; i++) {
                     const dec = lastGeneratedData.taxDecRows[i];
                     const inc = lastGeneratedData.taxIncRows[i];
                     let rowString = "";
-                    if(dec) { rowString += `${dec.users}\t${dec.price.toFixed(2)}\t${dec.total.toFixed(2)}`; } else { rowString += "\t\t"; }
+                    if(dec) { rowString += `${dec.users}\t${dec.price.toFixed(2)}\t${dec.total.toFixed(2)}\t${dec.fixedTotal.toFixed(2)}`; } else { rowString += "\t\t\t"; }
                     rowString += "\t\t";
-                    if(inc) { rowString += `${inc.users}\t${inc.price.toFixed(2)}\t${inc.total.toFixed(2)}`; }
+                    if(inc) { rowString += `${inc.users}\t${inc.price.toFixed(2)}\t${inc.total.toFixed(2)}\t${inc.fixedTotal.toFixed(2)}`; }
                     csvString += rowString + "\n";
                 }
             }
