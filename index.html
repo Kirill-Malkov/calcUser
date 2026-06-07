@@ -18,14 +18,14 @@
             Tiered Pricing Calculator
         </h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div class="flex justify-between items-center mb-2">
                     <label for="initialUsers" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
                         Initial Users <span class="text-slate-400 normal-case block md:inline md:ml-1">(Стартовые пользователи)</span>
                     </label>
-                    <span id="initialUsersVal" class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-lg text-sm">50</span>
+                    <input type="number" id="initialUsersNum" min="0" max="500" step="5" value="50" class="w-20 text-center bg-white border border-slate-200 text-indigo-700 font-bold py-1 rounded-lg text-sm focus:outline-indigo-500">
                 </div>
                 <input type="range" id="initialUsers" min="0" max="500" value="50" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                 <div class="flex justify-between text-xs text-slate-400 mt-1"><span>0</span><span>500</span></div>
@@ -34,11 +34,14 @@
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div class="flex justify-between items-center mb-2">
                     <label for="initialPrice" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
-                        Initial Price <span class="text-slate-400 normal-case block md:inline md:ml-1">(Начальная цена за 1 польз.)</span>
+                        Start1 / End2 <span class="text-slate-400 normal-case block md:inline md:ml-1">(макс 1 / мин 2)</span>
                     </label>
-                    <span id="initialPriceVal" class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-lg text-sm">₪100.00</span>
+                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 w-24">
+                        <span class="text-slate-400 text-sm mr-1">₪</span>
+                        <input type="number" id="initialPriceNum" min="50" max="400" step="5" value="205" class="w-full text-center text-indigo-700 font-bold text-sm focus:outline-none">
+                    </div>
                 </div>
-                <input type="range" id="initialPrice" min="50" max="400" value="100" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                <input type="range" id="initialPrice" min="50" max="400" value="205" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                 <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪50</span><span>₪400</span></div>
             </div>
 
@@ -47,7 +50,10 @@
                     <label for="priceStep" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
                         Price Change per Step <span class="text-slate-400 normal-case block md:inline md:ml-1">(Стоимость 1 ступени)</span>
                     </label>
-                    <span id="priceStepVal" class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-lg text-sm">₪10.00</span>
+                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 w-24">
+                        <span class="text-slate-400 text-sm mr-1">₪</span>
+                        <input type="number" id="priceStepNum" min="5" max="100" step="5" value="10" class="w-full text-center text-indigo-700 font-bold text-sm focus:outline-none">
+                    </div>
                 </div>
                 <input type="range" id="priceStep" min="5" max="100" value="10" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                 <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪5</span><span>₪100</span></div>
@@ -58,7 +64,7 @@
                     <label for="usersPerStep" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
                         Users per Step <span class="text-slate-400 normal-case block md:inline md:ml-1">(Кол-во пользователей в ступени)</span>
                     </label>
-                    <span id="usersPerStepVal" class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-lg text-sm">25</span>
+                    <input type="number" id="usersPerStepNum" min="5" max="100" step="5" value="25" class="w-20 text-center bg-white border border-slate-200 text-indigo-700 font-bold py-1 rounded-lg text-sm focus:outline-indigo-500">
                 </div>
                 <input type="range" id="usersPerStep" min="5" max="100" value="25" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                 <div class="flex justify-between text-xs text-slate-400 mt-1"><span>5</span><span>100</span></div>
@@ -67,13 +73,27 @@
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 md:col-span-2">
                 <div class="flex justify-between items-center mb-2">
                     <label for="priceCap" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
-                        Price Cap Boundary <span class="text-slate-400 normal-case block md:inline md:ml-1">(Ограничение цены: пол для Системы 1 / потолок для Системы 2)</span>
+                        End1 / Start2 <span class="text-slate-400 normal-case block md:inline md:ml-1">(мин 1 / макс 2)</span>
                     </label>
-                    <span id="priceCapVal" class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-lg text-sm">₪40.00</span>
+                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 w-24">
+                        <span class="text-slate-400 text-sm mr-1">₪</span>
+                        <input type="number" id="priceCapNum" min="20" max="205" step="5" value="55" class="w-full text-center text-indigo-700 font-bold text-sm focus:outline-none">
+                    </div>
                 </div>
-                <input type="range" id="priceCap" min="20" max="100" value="40" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-                <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪20</span><span id="priceCapMaxLabel">₪100</span></div>
+                <input type="range" id="priceCap" min="20" max="205" value="55" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪20</span><span id="priceCapMaxLabel">₪205</span></div>
             </div>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-8 flex flex-col sm:flex-row gap-6">
+            <label class="flex items-center space-x-3 cursor-pointer select-none">
+                <input type="checkbox" id="enableTaxTables" checked class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                <span class="text-sm font-medium text-slate-700">Generate Tax Tier Tables <span class="text-slate-400 text-xs block sm:inline">(Показывать прогрессивные таблицы)</span></span>
+            </label>
+            <label class="flex items-center space-x-3 cursor-pointer select-none opacity-50 transition-opacity" id="comparisonWrapper">
+                <input type="checkbox" id="enableComparison" disabled class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                <span class="text-sm font-medium text-slate-700">Enable In-Table Comparison <span class="text-slate-400 text-xs block sm:inline">(Включить режим сравнения систем)</span></span>
+            </label>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-4 mb-8 border-b pb-6 border-slate-100">
@@ -85,55 +105,103 @@
             </button>
         </div>
 
-        <div id="tablesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-8 hidden">
+        <div id="tablesContainer" class="flex flex-col gap-8 hidden">
             
-            <div>
-                <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                    System 1: Price Decreases per Step
-                </h3>
-                <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
-                    <p>Price decreases from initial rate. Cap acts as a minimum price floor.</p>
-                    <p class="text-slate-400">Цена снижается от начальной. Граница — это минимальный пол цены.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                        System 1: Price Decreases per Step
+                    </h3>
+                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                        <p>Starts from Initial Price (Max) and decreases down to Price Cap (Min).</p>
+                        <p class="text-slate-400">Начинается с начальной цены (макс) и уменьшается до границы цены (мин).</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-left border-collapse" id="decreasingTable">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-4">Users</th>
+                                    <th class="p-4">Price per User</th>
+                                    <th class="p-4 text-right">Total Price</th>
+                                    <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
-                
-                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                    <table class="w-full text-left border-collapse" id="decreasingTable">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
-                                <th class="p-4">Users</th>
-                                <th class="p-4">Price per User</th>
-                                <th class="p-4 text-right">Total Price</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm">
-                            </tbody>
-                    </table>
+
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                        System 2: Price Increases per Step
+                    </h3>
+                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                        <p>Starts from Price Cap (Min) and increases up to Initial Price (Max).</p>
+                        <p class="text-slate-400">Начинается с границы цены (мин) и увеличивается до начальной цены (макс).</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-left border-collapse" id="increasingTable">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-4">Users</th>
+                                    <th class="p-4">Price per User</th>
+                                    <th class="p-4 text-right">Total Price</th>
+                                    <th class="p-4 text-right hidden comp-header text-purple-700">Tax Tier Comparison</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-                    System 2: Price Increases per Step
-                </h3>
-                <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
-                    <p>Price increases from initial rate. Cap acts as a maximum price ceiling.</p>
-                    <p class="text-slate-400">Цена растет от начальной. Граница — это максимальный потолок цены.</p>
+            <div id="taxGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
+                        System 3: Tax Tier Decreases (Progressive)
+                    </h3>
+                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                        <p>Cumulative chunk calculations applying decreasing pricing per block level.</p>
+                        <p class="text-slate-400">Накопительный расчет: пласты пользователей считаются по снижающейся цене.</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-left border-collapse" id="taxDecreasingTable">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-4">Users</th>
+                                    <th class="p-4">Last Tier Price</th>
+                                    <th class="p-4 text-right">Total Price (Tax Way)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                    <table class="w-full text-left border-collapse" id="increasingTable">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
-                                <th class="p-4">Users</th>
-                                <th class="p-4">Price per User</th>
-                                <th class="p-4 text-right">Total Price</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm">
-                            </tbody>
-                    </table>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                        System 4: Tax Tier Increases (Progressive)
+                    </h3>
+                    <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                        <p>Cumulative chunk calculations applying increasing pricing per block level.</p>
+                        <p class="text-slate-400">Накопительный расчет: пласты пользователей считаются по растущей цене.</p>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-left border-collapse" id="taxIncreasingTable">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 text-sm font-semibold uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-4">Users</th>
+                                    <th class="p-4">Last Tier Price</th>
+                                    <th class="p-4 text-right">Total Price (Tax Way)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -141,111 +209,202 @@
     </div>
 
     <script>
-        // DOM Elements
+        // DOM Elements mapping
         const inputs = ['initialUsers', 'initialPrice', 'priceStep', 'usersPerStep', 'priceCap'];
-        const elements = {};
+        const rangeElements = {};
+        const numElements = {};
+
         inputs.forEach(id => {
-            elements[id] = document.getElementById(id);
-            elements[`${id}Val`] = document.getElementById(`${id}Val`);
+            rangeElements[id] = document.getElementById(id);
+            numElements[id] = document.getElementById(id + 'Num');
         });
+
         const priceCapMaxLabel = document.getElementById('priceCapMaxLabel');
+        const enableTaxTables = document.getElementById('enableTaxTables');
+        const enableComparison = document.getElementById('enableComparison');
+        const comparisonWrapper = document.getElementById('comparisonWrapper');
 
         const calculateBtn = document.getElementById('calculateBtn');
         const copyBtn = document.getElementById('copyBtn');
         const tablesContainer = document.getElementById('tablesContainer');
+        const taxGrid = document.getElementById('taxGrid');
+
         const decTbody = document.getElementById('decreasingTable').querySelector('tbody');
         const incTbody = document.getElementById('increasingTable').querySelector('tbody');
+        const taxDecTbody = document.getElementById('taxDecreasingTable').querySelector('tbody');
+        const taxIncTbody = document.getElementById('taxIncreasingTable').querySelector('tbody');
 
         let lastGeneratedData = null;
 
-        // Sync slider values dynamically to UI text badges (with New Shekel Symbol)
-        function updateSliderLabels() {
-            const currentInitPrice = parseFloat(elements.initialPrice.value);
-            
-            // Динамическое ограничение: Cap не может быть больше, чем Initial Price
-            elements.priceCap.max = currentInitPrice;
-            priceCapMaxLabel.textContent = '₪' + currentInitPrice.toFixed(0);
-            
-            // Если текущее значение Cap превысило новый максимум, сбрасываем его до максимума
-            if (parseFloat(elements.priceCap.value) > currentInitPrice) {
-                elements.priceCap.value = currentInitPrice;
+        // Checkbox states handler
+        enableTaxTables.addEventListener('change', () => {
+            if (enableTaxTables.checked) {
+                enableComparison.disabled = false;
+                comparisonWrapper.classList.remove('opacity-50');
+            } else {
+                enableComparison.checked = false;
+                enableComparison.disabled = true;
+                comparisonWrapper.classList.add('opacity-50');
             }
+        });
 
-            elements.initialUsersVal.textContent = elements.initialUsers.value;
-            elements.initialPriceVal.textContent = '₪' + currentInitPrice.toFixed(2);
-            elements.priceStepVal.textContent = '₪' + parseFloat(elements.priceStep.value).toFixed(2);
-            elements.usersPerStepVal.textContent = elements.usersPerStep.value;
-            elements.priceCapVal.textContent = '₪' + parseFloat(elements.priceCap.value).toFixed(2);
+        // Dual Synchronization Control engine (Slider <-> Number Box)
+        function syncValues(sourceId, type) {
+            let targetVal;
+            if (type === 'range') {
+                targetVal = parseInt(rangeElements[sourceId].value);
+                numElements[sourceId].value = targetVal;
+            } else {
+                targetVal = parseInt(numElements[sourceId].value) || 0;
+                // Clip values against boundaries
+                const min = parseInt(rangeElements[sourceId].min);
+                const max = parseInt(rangeElements[sourceId].max);
+                if (targetVal < min) targetVal = min;
+                if (targetVal > max) targetVal = max;
+                numElements[sourceId].value = targetVal;
+                rangeElements[sourceId].value = targetVal;
+            }
+            updateLimitsAndLabels();
         }
 
-        inputs.forEach(id => elements[id].addEventListener('input', updateSliderLabels));
-        updateSliderLabels(); // Run once initially
+        function updateLimitsAndLabels() {
+            const currentInitPrice = parseFloat(numElements.initialPrice.value) || 0;
+            
+            // Boundary enforcement: Cap cannot be greater than Initial Price
+            rangeElements.priceCap.max = currentInitPrice;
+            numElements.priceCap.max = currentInitPrice;
+            priceCapMaxLabel.textContent = '₪' + currentInitPrice.toFixed(0);
+            
+            if (parseFloat(numElements.priceCap.value) > currentInitPrice) {
+                numElements.priceCap.value = currentInitPrice;
+                rangeElements.priceCap.value = currentInitPrice;
+            }
+        }
+
+        inputs.forEach(id => {
+            rangeElements[id].addEventListener('input', () => syncValues(id, 'range'));
+            numElements[id].addEventListener('change', () => syncValues(id, 'number'));
+        });
+
+        updateLimitsAndLabels(); // Initial run
 
         // Computational Core Logic
         calculateBtn.addEventListener('click', () => {
-            const initUsers = parseInt(elements.initialUsers.value);
-            const initPrice = parseFloat(elements.initialPrice.value);
-            const stepDelta = parseFloat(elements.priceStep.value);
-            const userStepSize = parseInt(elements.usersPerStep.value);
-            const capPrice = parseFloat(elements.priceCap.value);
+            const initUsers = parseInt(numElements.initialUsers.value) || 0;
+            const maxPrice = parseFloat(numElements.initialPrice.value) || 0;
+            const stepDelta = parseFloat(numElements.priceStep.value) || 0;
+            const userStepSize = parseInt(numElements.usersPerStep.value) || 25;
+            const minPrice = parseFloat(numElements.priceCap.value) || 0;
             const MAX_USERS = 500;
 
-            if (initUsers > MAX_USERS) return;
+            if (initUsers > MAX_USERS || userStepSize <= 0) return;
 
-            const decRows = [];
-            const incRows = [];
-
+            const dataset = { decRows: [], incRows: [], taxDecRows: [], taxIncRows: [] };
             let currentStepIdx = 0;
 
-            for (let users = initUsers; users <= MAX_USERS; users += userStepSize) {
-                // Система 1 (Уменьшение) падает до capPrice (работает как пол/floor)
-                let priceDec = initPrice - (currentStepIdx * stepDelta);
-                if (priceDec < capPrice) priceDec = capPrice;
-                if (priceDec < 0) priceDec = 0; 
+            // Pre-calculate prices array per steps for taxonomic block evaluation
+            const stepPricesDec = [];
+            const stepPricesInc = [];
+            let maxStepsPossible = Math.ceil(MAX_USERS / userStepSize) + 5;
 
-                // Система 2 (Повышение) растет от начальной цены. 
-                // Поскольку по условию задачи нам нужна таблица НАОБОРОТ (от максимальной к минимальной),
-                // в Системе 2 цена идет ВВЕРХ, но ограничивается значением initPrice? 
-                // В кодовой базе мы сохраняем логику зеркального шага, где capPrice — точка контроля.
-                let priceInc = initPrice + (currentStepIdx * stepDelta);
-                
-                // Для правильной работы "наоборот", если в Системе 1 capPrice — это нижняя планка,
-                // то в Системе 2 шаги идут зеркально вверх. Ограничиваем рост, если требуется, либо оставляем свободным.
-                // Чтобы сохранить математическую точность инверсии, мы не зажимаем верхний предел значением capPrice,
-                // так как capPrice теперь гарантированно меньше или равен initPrice.
-                
-                decRows.push({ users, price: priceDec, total: users * priceDec });
-                incRows.push({ users, price: priceInc, total: users * priceInc });
+            for (let i = 0; i < maxStepsPossible; i++) {
+                let pDec = maxPrice - (i * stepDelta);
+                if (pDec < minPrice) pDec = minPrice;
+                if (pDec < 0) pDec = 0;
+                stepPricesDec.push(pDec);
 
-                currentStepIdx++;
-                if(userStepSize <= 0) break; 
+                let pInc = minPrice + (i * stepDelta);
+                if (pInc > maxPrice) pInc = maxPrice;
+                stepPricesInc.push(pInc);
             }
 
-            lastGeneratedData = { decRows, incRows };
+            // Processing Loop
+            for (let users = initUsers; users <= MAX_USERS; users += userStepSize) {
+                if (users === 0) continue;
 
-            renderTableBody(decTbody, decRows, 'text-blue-600 font-medium');
-            renderTableBody(incTbody, incRows, 'text-amber-600 font-medium');
+                // 1. System 1 & 2 Standard calculation
+                let standardPriceDec = stepPricesDec[currentStepIdx];
+                let standardPriceInc = stepPricesInc[currentStepIdx];
+
+                let totalStandardDec = users * standardPriceDec;
+                let totalStandardInc = users * standardPriceInc;
+
+                // 2. System 3 & 4 Tax Layered Chunk Cumulative Calculation
+                let totalTaxDec = 0;
+                let totalTaxInc = 0;
+                let remainingUsers = users;
+                let chunkIdx = 0;
+
+                // First base chunk sizing evaluation
+                let currentBlockCapacity = initUsers > 0 ? initUsers : userStepSize;
+
+                while (remainingUsers > 0) {
+                    let chunk = Math.min(remainingUsers, currentBlockCapacity);
+                    
+                    totalTaxDec += chunk * stepPricesDec[chunkIdx];
+                    totalTaxInc += chunk * stepPricesInc[chunkIdx];
+
+                    remainingUsers -= chunk;
+                    chunkIdx++;
+                    currentBlockCapacity = userStepSize; // shifts to standard size for subsequent cycles
+                }
+
+                dataset.decRows.push({ users, price: standardPriceDec, total: totalStandardDec, taxTotal: totalTaxDec });
+                dataset.incRows.push({ users, price: standardPriceInc, total: totalStandardInc, taxTotal: totalTaxInc });
+                dataset.taxDecRows.push({ users, price: stepPricesDec[currentStepIdx], total: totalTaxDec });
+                dataset.taxIncRows.push({ users, price: stepPricesInc[currentStepIdx], total: totalTaxInc });
+
+                currentStepIdx++;
+            }
+
+            lastGeneratedData = dataset;
+
+            // Render tables onto UI view
+            const showTax = enableTaxTables.checked;
+            const compMode = enableComparison.checked && showTax;
+
+            // Toggle table structures visibility based on configurations
+            document.querySelectorAll('.comp-header').forEach(el => el.classList.toggle('hidden', !compMode));
+            taxGrid.classList.toggle('hidden', !showTax || compMode);
+
+            renderTableBody(decTbody, dataset.decRows, 'text-blue-600 font-medium', compMode);
+            renderTableBody(incTbody, dataset.incRows, 'text-amber-600 font-medium', compMode);
+            
+            if (showTax && !compMode) {
+                renderTableBody(taxDecTbody, dataset.taxDecRows, 'text-indigo-600 font-medium', false);
+                renderTableBody(taxIncTbody, dataset.taxIncRows, 'text-rose-600 font-medium', false);
+            }
 
             tablesContainer.classList.remove('hidden');
             copyBtn.classList.remove('hidden');
             tablesContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
 
-        function renderTableBody(tbodyNode, dynamicDataset, styleContext) {
+        function renderTableBody(tbodyNode, rows, style, compMode) {
             tbodyNode.innerHTML = '';
-            dynamicDataset.forEach(row => {
+            rows.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors duration-75";
+                
+                let compTd = '';
+                if (compMode) {
+                    let diff = row.taxTotal - row.total;
+                    let diffStr = (diff >= 0 ? '+' : '') + diff.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    let diffStyle = diff > 0 ? 'text-emerald-600 font-bold' : (diff < 0 ? 'text-rose-600 font-bold' : 'text-slate-400');
+                    compTd = `<td class="p-4 text-right ${diffStyle}">₪${row.taxTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} <span class="text-xs font-normal opacity-80 block">(${diffStr} vs basic)</span></td>`;
+                }
+
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-slate-700">${row.users}</td>
-                    <td class="p-4 ${styleContext}">₪${row.price.toFixed(2)}</td>
+                    <td class="p-4 ${style}">₪${row.price.toFixed(2)}</td>
                     <td class="p-4 text-right font-bold text-slate-900">₪${row.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    ${compTd}
                 `;
                 tbodyNode.appendChild(tr);
             });
         }
 
-        // Export Mechanism formatted with standard Tab Delimiters for Excel/Google Sheets
+        // Export Mechanism standard Tab Delimiters layout configuration
         copyBtn.addEventListener('click', () => {
             if (!lastGeneratedData) return;
 
@@ -257,7 +416,6 @@
             for(let i = 0; i < maxLength; i++) {
                 const dec = lastGeneratedData.decRows[i];
                 const inc = lastGeneratedData.incRows[i];
-
                 let rowString = "";
                 
                 if(dec) {
@@ -265,21 +423,32 @@
                 } else {
                     rowString += "\t\t";
                 }
-
                 rowString += "\t\t"; 
-
                 if(inc) {
                     rowString += `${inc.users}\t${inc.price.toFixed(2)}\t${inc.total.toFixed(2)}`;
                 }
-
                 csvString += rowString + "\n";
+            }
+
+            // Append additional Tax structures into file if open in standalone visibility tree
+            if(enableTaxTables.checked && !enableComparison.checked) {
+                csvString += "\n\nSYSTEM 3: TAX DECREASES (PROGRESSIVE)\t\t\t\tSYSTEM 4: TAX INCREASES (PROGRESSIVE)\n";
+                csvString += "Users\tPrice Per User (ILS)\tTax Cumulative Cost\t\tUsers\tPrice Per User (ILS)\tTax Cumulative Cost\n";
+                for(let i = 0; i < maxLength; i++) {
+                    const dec = lastGeneratedData.taxDecRows[i];
+                    const inc = lastGeneratedData.taxIncRows[i];
+                    let rowString = "";
+                    if(dec) { rowString += `${dec.users}\t${dec.price.toFixed(2)}\t${dec.total.toFixed(2)}`; } else { rowString += "\t\t"; }
+                    rowString += "\t\t";
+                    if(inc) { rowString += `${inc.users}\t${inc.price.toFixed(2)}\t${inc.total.toFixed(2)}`; }
+                    csvString += rowString + "\n";
+                }
             }
 
             navigator.clipboard.writeText(csvString).then(() => {
                 const originalText = copyBtn.textContent;
                 copyBtn.textContent = "✓ Copied! Paste directly into Excel";
                 copyBtn.classList.replace('bg-emerald-600', 'bg-teal-600');
-                
                 setTimeout(() => {
                     copyBtn.textContent = originalText;
                     copyBtn.classList.replace('bg-teal-600', 'bg-emerald-600');
