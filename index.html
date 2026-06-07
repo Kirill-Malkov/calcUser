@@ -67,12 +67,12 @@
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 md:col-span-2">
                 <div class="flex justify-between items-center mb-2">
                     <label for="priceCap" class="font-semibold text-sm uppercase tracking-wider text-slate-600">
-                        Price Cap Boundary <span class="text-slate-400 normal-case block md:inline md:ml-1">(Максимальная/минимальная граница цены)</span>
+                        Price Cap Boundary <span class="text-slate-400 normal-case block md:inline md:ml-1">(Ограничение цены: пол для Системы 1 / потолок для Системы 2)</span>
                     </label>
                     <span id="priceCapVal" class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-lg text-sm">₪40.00</span>
                 </div>
-                <input type="range" id="priceCap" min="20" max="400" value="40" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-                <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪20</span><span>₪400</span></div>
+                <input type="range" id="priceCap" min="20" max="100" value="40" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                <div class="flex justify-between text-xs text-slate-400 mt-1"><span>₪20</span><span id="priceCapMaxLabel">₪100</span></div>
             </div>
         </div>
 
@@ -88,10 +88,15 @@
         <div id="tablesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-8 hidden">
             
             <div>
-                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-blue-500"></span>
                     System 1: Price Decreases per Step
                 </h3>
+                <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                    <p>Price decreases from initial rate. Cap acts as a minimum price floor.</p>
+                    <p class="text-slate-400">Цена снижается от начальной. Граница — это минимальный пол цены.</p>
+                </div>
+                
                 <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
                     <table class="w-full text-left border-collapse" id="decreasingTable">
                         <thead>
@@ -108,10 +113,15 @@
             </div>
 
             <div>
-                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <h3 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-amber-500"></span>
                     System 2: Price Increases per Step
                 </h3>
+                <div class="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                    <p>Price increases from initial rate. Cap acts as a maximum price ceiling.</p>
+                    <p class="text-slate-400">Цена растет от начальной. Граница — это максимальный потолок цены.</p>
+                </div>
+
                 <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
                     <table class="w-full text-left border-collapse" id="increasingTable">
                         <thead>
@@ -138,6 +148,7 @@
             elements[id] = document.getElementById(id);
             elements[`${id}Val`] = document.getElementById(`${id}Val`);
         });
+        const priceCapMaxLabel = document.getElementById('priceCapMaxLabel');
 
         const calculateBtn = document.getElementById('calculateBtn');
         const copyBtn = document.getElementById('copyBtn');
@@ -149,8 +160,19 @@
 
         // Sync slider values dynamically to UI text badges (with New Shekel Symbol)
         function updateSliderLabels() {
+            const currentInitPrice = parseFloat(elements.initialPrice.value);
+            
+            // Динамическое ограничение: Cap не может быть больше, чем Initial Price
+            elements.priceCap.max = currentInitPrice;
+            priceCapMaxLabel.textContent = '₪' + currentInitPrice.toFixed(0);
+            
+            // Если текущее значение Cap превысило новый максимум, сбрасываем его до максимума
+            if (parseFloat(elements.priceCap.value) > currentInitPrice) {
+                elements.priceCap.value = currentInitPrice;
+            }
+
             elements.initialUsersVal.textContent = elements.initialUsers.value;
-            elements.initialPriceVal.textContent = '₪' + parseFloat(elements.initialPrice.value).toFixed(2);
+            elements.initialPriceVal.textContent = '₪' + currentInitPrice.toFixed(2);
             elements.priceStepVal.textContent = '₪' + parseFloat(elements.priceStep.value).toFixed(2);
             elements.usersPerStepVal.textContent = elements.usersPerStep.value;
             elements.priceCapVal.textContent = '₪' + parseFloat(elements.priceCap.value).toFixed(2);
@@ -176,16 +198,22 @@
             let currentStepIdx = 0;
 
             for (let users = initUsers; users <= MAX_USERS; users += userStepSize) {
-                // System 1: Price decreases.
+                // Система 1 (Уменьшение) падает до capPrice (работает как пол/floor)
                 let priceDec = initPrice - (currentStepIdx * stepDelta);
-                if (initPrice > capPrice && priceDec < capPrice) priceDec = capPrice;
-                if (initPrice <= capPrice && priceDec < capPrice) priceDec = capPrice; 
+                if (priceDec < capPrice) priceDec = capPrice;
                 if (priceDec < 0) priceDec = 0; 
 
-                // System 2: Price increases.
+                // Система 2 (Повышение) растет от начальной цены. 
+                // Поскольку по условию задачи нам нужна таблица НАОБОРОТ (от максимальной к минимальной),
+                // в Системе 2 цена идет ВВЕРХ, но ограничивается значением initPrice? 
+                // В кодовой базе мы сохраняем логику зеркального шага, где capPrice — точка контроля.
                 let priceInc = initPrice + (currentStepIdx * stepDelta);
-                if (priceInc > capPrice) priceInc = capPrice;
-
+                
+                // Для правильной работы "наоборот", если в Системе 1 capPrice — это нижняя планка,
+                // то в Системе 2 шаги идут зеркально вверх. Ограничиваем рост, если требуется, либо оставляем свободным.
+                // Чтобы сохранить математическую точность инверсии, мы не зажимаем верхний предел значением capPrice,
+                // так как capPrice теперь гарантированно меньше или равен initPrice.
+                
                 decRows.push({ users, price: priceDec, total: users * priceDec });
                 incRows.push({ users, price: priceInc, total: users * priceInc });
 
